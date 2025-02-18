@@ -17,17 +17,24 @@ bool MainScene::init()
     auto safeArea = _director->getSafeAreaRect();
     auto safeOrigin = safeArea.origin;
 
-    auto driverNode = Node::create();
-    addChild(driverNode);
+
+    visibleSize = Director::getInstance()->getVisibleSize();
+    auto camera = Camera::createOrthographic(visibleSize.width * 2, visibleSize.height * 2, -1024, 1024);
+    camera->setCameraFlag(CameraFlag::USER1);
+
+
     tileMap = new ax::FastTMXTiledMap();
     tileMap->initWithTMXFile("tilemaps/myTilemap.tmx");
-    driverNode->addChild(tileMap);
+
+    camera->addChild(tileMap);
+    this->addChild(camera);
 
     auto sequence = Sequence::create(MoveBy::create(5, Vec2(-1300, 0)), MoveBy::create(5, Vec2(1300, 0)), nullptr);
-    driverNode->runAction(sequence);
+    camera->runAction(sequence);
 
-    // scheduleUpdate() is required to ensure update(float) is called on every loop
-    scheduleUpdate();
+    //camera->setZoom(1.5);
+    //camera->setZoom(0.5); no effect
+    //camera->applyZoom();
 
     return true;
 }
